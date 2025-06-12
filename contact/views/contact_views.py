@@ -2,11 +2,12 @@ from django.shortcuts import render, get_object_or_404, redirect
 from django.core.paginator import Paginator
 from django.db.models import Q
 from contact.models import Contact
+from django.contrib.auth.decorators import login_required
 
-
+@login_required(login_url='contact:login')
 def index(request):
-
-    contacts = Contact.objects.filter(show=True).order_by('-id')
+    
+    contacts = Contact.objects.filter(show=True, owner=request.user).order_by('-id')
 
     paginator = Paginator(contacts, 10)
     page_number = request.GET.get("page")
