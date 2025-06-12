@@ -5,15 +5,7 @@
 
         <h2>Login</h2>
         
-        {% if user.is_authenticated %}
-            <p>
-                {{ user.username }}
-            </p>
-            <p>
-                fazer <a href="{% url "contact:logout" %}">logout</a>.
-            </p>
-        {% else %}
-            {% include "contact/partials/_user_form.html" %}
-        {% endif %}
+        {% include "contact/partials/_user_form.html" %}
+
     </div>
 {% endblock content %}
