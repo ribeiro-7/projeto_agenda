@@ -1,5 +1,5 @@
 from django import forms
-from contact.models import Contact
+from contact.models import Contact, Category
 from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth.models import User
 from django.contrib.auth import password_validation
@@ -15,9 +15,17 @@ class ContactForm(forms.ModelForm):
         )
     )
 
+    new_category = forms.CharField(
+        required=False,
+        label='Create a new category',
+        widget=forms.TextInput(attrs={
+            'placeholder': 'Type a new category here if not in the list'
+        })
+    )
+
     class Meta:
         model = Contact
-        fields = ('first_name', 'last_name', 'phone', 'email', 'description', 'category', 'picture')
+        fields = ('first_name', 'last_name', 'phone', 'email', 'description', 'category', 'new_category', 'picture')
         widgets = {
             'first_name': forms.TextInput(
                 attrs={
@@ -45,6 +53,16 @@ class ContactForm(forms.ModelForm):
                 }
             )
         }
+
+    def clean(self):
+        cleaned_data = super().clean()
+        new_category = cleaned_data.get('new_category')
+
+        if new_category:
+            category, created = Category.objects.get_or_create(name=new_category)
+            cleaned_data['category'] = category
+
+        return cleaned_data
 
 class RegisterForm(UserCreationForm):
 
